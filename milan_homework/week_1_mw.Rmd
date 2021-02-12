@@ -10,14 +10,115 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(rethinking)
-lubridate::today()
 # library(brms)
 ```
 
-# Chapter 1
+# Notes
 
-# Chapter 2
+## Chapter 1. The Golem of Prague
 
-# Chapter 3
+### Statistical golems
+
+### Statistical rethinking
+
+### Tools for golem engineering
+
+## Chapter 2. Small Worlds and Large Worlds
+
+### The garden of forking data
+
+### Building a model
+
+### Components of the model
+
+### Making the model go
+
+## Chapter 3. Sampling the Imaginary
+
+### Sampling from a grid-approximate posterior
+
+### Sampling to summarize
+
+### Sampling to simulate prediction
 
 # Homework
+
+1. Suppose the globe tossing data (Chapter 2) had turned out to be 4 water in 15 tosses. 
+Construct the posterior distribution, using grid approximation. 
+Use the same flat prior as in the book.
+
+```{r}
+
+## Problem 1
+
+# define grid
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+
+# define prior
+prior <- rep( 1 , 1000 )
+
+# compute likelihood at each value in grid
+likelihood <- dbinom( 4 , size=15 , prob=p_grid )
+
+# compute product of likelihood and prior
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so it sums to 1
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+# plot posterior
+plot(x =  p_grid,
+     y = posterior,
+     type="l",
+     xlab = "proportion water",
+     ylab = "posterior probability" )
+```
+
+2. Start over in 1, but now use a prior that is zero below p = 0:5 and a constant above p = 0:5. 
+This corresponds to prior information that a majority of the Earth's surface is water. 
+What difference does the better prior make?
+
+```{r}
+## Problem 2
+
+# define grid
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+
+# define prior
+prior <- c( rep( 0 , 500 ) , rep( 2 , 500 ) )
+
+# compute likelihood at each value in grid
+likelihood <- dbinom( 4 , size=15 , prob=p_grid )
+
+# compute product of likelihood and prior
+unstd.posterior <- likelihood * prior
+
+# standardize the posterior, so it sums to 1
+posterior <- unstd.posterior / sum(unstd.posterior)
+
+# plot posterior probability
+plot(x = p_grid,
+     y = posterior, 
+     type = "l", 
+     xlab = "proportion water", 
+     ylab = "posterior probability")
+```
+
+3. For the posterior distribution from 2, compute 89% percentile and HPDI intervals. 
+Compare the widths of these intervals. 
+Which is wider? Why? 
+If you had only the information in the interval, what might you misunderstand about the shape of the posterior distribution?
+
+```{r}
+## Problem 3
+
+samples <- sample( p_grid , prob=posterior , size=1e4 , replace=TRUE )
+
+plot( samples , ylim=c(0,1) , xlab="samples" , ylab="proportion water" )
+
+PI( samples , 0.89 )
+
+HPDI( samples , 0.89)
+
+```
+
