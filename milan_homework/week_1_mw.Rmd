@@ -1,0 +1,23 @@
+---
+title: "Week 01 - Statistical Rethinking: A Bayesian Course"
+subtitle: "Chapters 1, 2 and 3"
+author: "Milan Wiedemann"
+date: "`r lubridate::today()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(rethinking)
+lubridate::today()
+# library(brms)
+```
+
+# Chapter 1
+
+# Chapter 2
+
+# Chapter 3
+
+# Homework
