@@ -3,8 +3,8 @@ title: "Week 1"
 author: "Chris Beeley"
 date: "08/03/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
   
 ```{r setup, include=FALSE}
@@ -102,6 +102,8 @@ flist <- alist(
 
 ```
 
+### M3
+
 Translate the following code into a mathematical formula
 
 ```{r, eval = FALSE}
@@ -115,9 +117,89 @@ sigma ~ dexp(1)
 ```
 
 $$y_{i} \sim Normal(\mu, \sigma)$$
-$$\mu = a + \beta x$$
+$$\mu_{i} = a + \beta x_{i}$$
 $$a \sim Normal(0, 10)$$
 $$b \sim Uniform(0, 1)$$
 $$\sigma \sim Exponential(1)$$
 
+### M4
+
+A sample of students is measured for height each year for 3 years. After three years you want to fit a linear regression predicting height using year as a predictor. Write down the model and the priors.
+
+$$y_{i} \sim Normal(\mu, \sigma)$$
+$$\mu_{i} = a + \beta x_{i}$$
+$$a \sim Normal(178, 30)$$
+$$b \sim Normal(0, 2)$$
+$$\sigma \sim Uniform(50)$$
+### M5
+
+Suppose I reminded you that every student gets taller each year. How would that affect the prior?
+
+$$b \sim Uniform(0, 5)$$
+
+### M6 
+
+Now suppose I tell you that the variance of height is never more than 64cm. How does this lead you to revise your priors?
+
+$$\sigma \sim Uniform(8)$$
+
+### M7
+
+Refit the model again without xbar for weight this time
+
+Original code:
+
+```{r}
+
+library(rethinking)
+data(Howell1)
+d <- Howell1
+d2 <- d[ d$age >= 18 , ]
+
+# define the average weight, x-bar
+xbar <- mean(d2$weight)
+
+# fit model
+m4.3 <- quap(
+    alist(
+        height ~ dnorm( mu , sigma ) ,
+        mu <- a + b*( weight - xbar ) ,
+        a ~ dnorm( 178 , 20 ) ,
+        b ~ dlnorm( 0 , 1 ) ,
+        sigma ~ dunif( 0 , 50 )
+    ) , data=d2 )
+
+## R code 4.44
+precis( m4.3 )
+
+## R code 4.45
+round( vcov( m4.3 ) , 3 )
+```
+
+New model
+
+```{r}
+
+library(rethinking)
+data(Howell1)
+d <- Howell1
+d2 <- d[ d$age >= 18 , ]
+
+# fit model
+m.new <- quap(
+    alist(
+        height ~ dnorm( mu , sigma ) ,
+        mu <- a + b*( weight) ,
+        a ~ dnorm( 178 , 20 ) ,
+        b ~ dlnorm( 0 , 1 ) ,
+        sigma ~ dunif( 0 , 50 )
+    ) , data=d2 )
+
+## R code 4.44
+precis( m.new )
+
+## R code 4.45
+round( vcov( m.new ) , 3 )
+
+```
 
